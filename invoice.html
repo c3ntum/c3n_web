@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unternehmen</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+<!--MENUBAR-->
+    <div id="navbar-container"></div>
+ <!--MENUBAR-->
+
+ <div class="container mt-5">
+    <form>
+        <h1 class="mb-4">Rechnung erfassen</h1>
+        
+        <div class="mb-3">
+            <label for="invoiceNumber" class="form-label">Rechnungsnummer</label>
+            <input type="text" class="form-control" id="invoiceNumber" placeholder="Rechnungsnummer eingeben" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="invoiceDate" class="form-label">Rechnungsdatum</label>
+            <input type="date" class="form-control" id="invoiceDate" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="customerName" class="form-label">Kundenname</label>
+            <input type="text" class="form-control" id="customerName" placeholder="Kundenname eingeben" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="amount" class="form-label">Betrag</label>
+            <input type="number" class="form-control" id="amount" placeholder="Betrag eingeben" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Beschreibung</label>
+            <textarea class="form-control" id="description" rows="4" placeholder="Beschreibung eingeben"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Speichern</button>
+    </form>
+</div>
+    
+<!--FOOTBAR-->
+    <div id="footer-container"></div>
+ <!--FOOTBAR-->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="menubar.js"></script>
+    <script src="footbar.js"></script>
+</body>
+</html>
