@@ -4,7 +4,7 @@ const navbarContainer = document.getElementById('navbar-container');
 // Navbar HTML dynamisch erstellen
 const navbarHTML = `
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">c3ntum</a>
+    <a class="navbar-brand" href="index.html">c3ntum</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -17,7 +17,7 @@ const navbarHTML = `
                 <a class="nav-link" href="invoice.html">Invoice</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">About</a>
+                <a class="nav-link" href="about.html">About</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Contact</a>

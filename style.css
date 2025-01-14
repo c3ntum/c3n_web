@@ -18,3 +18,61 @@ body {
         bottom: 0;
         width: 100%;
     }
+    .navbar {
+        padding-left:20px;
+    }
+
+
+
+
+/*code container*/
+.code-container {
+    padding: 20px;
+    white-space: pre;
+    font-size: 18px;
+    line-height: 0.5;
+    overflow-x: auto;
+    color: white;
+    background-color: black;
+    border-radius:8px;
+    cursor:pointer;
+    font-family: 'Courier New', Courier, monospace;
+}
+.keyword {
+    color: #569cd6; /* Blue for keywords */
+    font-weight: bold;
+}
+.string {
+    color: #d69d85; /* Light brown for strings */
+}
+.function {
+    color: #dcdcaa; /* Yellow for functions */
+}
+.variable {
+    color: #9cdcfe; /* Light blue for variables */
+}
+.number {
+    color: #b5cea8; /* Light green for numbers */
+}
+.highlight {
+    background-color: rgba(85, 85, 255, 0.2);
+}
+.output {
+    margin-top: 20px;
+    background-color: #333;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 18px;
+}
+.symbol {
+    font-size: 24px;
+    margin: 0 5px;
+    color: #f1c232;
+}
+
+/*ABOUT Container*/
+.black {
+    background-color:black;
+    color:white;
+    font-family: 'Courier New', Courier, monospace;
+}
