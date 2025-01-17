@@ -4,163 +4,313 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>c3ntum</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+            /* Modal-Styles */
+            #pdfModal {
+            display: none;
+            position: fixed;
+            z-index: 99;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #pdfModalContent {
+            background: white;
+            width: 80%;
+            height: 80%;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #closeModal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
 
-
 <body>
-<!--MENUBAR-->
+    <!--MENUBAR-->
     <div id="navbar-container"></div>
- <!--MENUBAR-->
+    <!--MENUBAR-->
 
- <div class="container mt-5">
-
- <div class="accordion" id="accordionExample">
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          Invoice Data
-        </button>
-      </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-        <div class="accordion-body">
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="invoiceIssuer" class="form-label">Adresse Rechnungssteller</label>
-                    <textarea class="form-control" id="invoiceIssuer" rows="2" placeholder="Adresse des Rechnungsstellers eingeben"></textarea>
-                </div>
-                <div class="col-md-6">
-                    <label for="invoiceRecipient" class="form-label">Adresse Rechnungsempfänger</label>
-                    <textarea class="form-control" id="invoiceRecipient" rows="2" placeholder="Adresse des Rechnungsempfängers eingeben"></textarea>
-                </div>
-            </div>
-    
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="invoiceNumber" class="form-label">Rechnungsnummer</label>
-                    <input type="text" class="form-control" id="invoiceNumber" placeholder="Rechnungsnummer">
-                </div>
-                <div class="col-md-4">
-                    <label for="licensePlate" class="form-label">Fahrzeugkennzeichen</label>
-                    <input type="text" class="form-control" id="licensePlate" placeholder="Fahrzeugkennzeichen">
-                </div>
-                <div class="col-md-4">
-                    <label for="executionDate" class="form-label">Ausführungsdatum</label>
-                    <input type="date" class="form-control" id="executionDate" value="{{ today }}">
-                </div>
-            </div>
-    
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="invoiceDate" class="form-label">Rechnungsdatum</label>
-                    <input type="date" class="form-control" id="invoiceDate" value="{{ today }}">
-                </div>
-            </div>
-
+    <!-- Modal -->
+    <div id="pdfModal">
+        <div id="pdfModalContent">
+            <button id="closeModal" onclick="closeModal()">X</button>
+            <iframe id="pdfViewer"></iframe>
         </div>
-      </div>
     </div>
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-          Position data
-        </button>
-      </h2>
-      <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-        <div class="accordion-body">
+    <!-- Modal -->
 
-            <div class="mb-3">
-                <label class="form-label">Rechnungspositionen</label>
-                <table class="table table-bordered" id="positionsTable">
-                    <thead>
-                        <tr>
-                            <th>Position</th>
-                            <th style="width: 40%;">Beschreibung</th>
-                            <th>Menge</th>
-                            <th>Einzelpreis</th>
-                            <th>Gesamt</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td><input type="text" class="form-control" placeholder="Beschreibung"></td>
-                            <td><input type="number" class="form-control quantity" placeholder="Menge" min="0"></td>
-                            <td><input type="number" class="form-control unit-price" placeholder="Einzelpreis" min="0" step="0.01"></td>
-                            <td><input type="number" class="form-control total" placeholder="Gesamt" disabled></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button type="button" class="btn btn-secondary" id="addPositionButton">Position hinzufügen</button>
+
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Rechnungserstellung</h1>
+    
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true">
+                        Invoice Data
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="invoiceIssuer" class="form-label">Adresse Rechnungssteller</label>
+                                <textarea class="form-control" id="invoiceIssuer" rows="2" placeholder="Adresse des Rechnungsstellers eingeben"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="invoiceRecipient" class="form-label">Adresse Rechnungsempfänger</label>
+                                <textarea class="form-control" id="invoiceRecipient" rows="2" placeholder="Adresse des Rechnungsempfängers eingeben"></textarea>
+                            </div>
+                        </div>
+        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="invoiceNumber" class="form-label">Rechnungsnummer</label>
+                                <input type="text" class="form-control" id="invoiceNumber" placeholder="Rechnungsnummer">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="licensePlate" class="form-label">Fahrzeugkennzeichen</label>
+                                <input type="text" class="form-control" id="licensePlate" placeholder="Fahrzeugkennzeichen">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="executionDate" class="form-label">Ausführungsdatum</label>
+                                <input type="date" class="form-control" id="executionDate">
+                            </div>
+                        </div>
+        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="invoiceDate" class="form-label">Rechnungsdatum</label>
+                                <input type="date" class="form-control" id="invoiceDate">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dueDate" class="form-label">Fälligkeitsdatum</label>
+                                <input type="date" class="form-control" id="dueDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false">
+                        Position Data
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <div class="mb-3">
+                            <label class="form-label">Rechnungspositionen</label>
+                            <table class="table table-bordered" id="positionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Position</th>
+                                        <th style="width: 40%;">Beschreibung</th>
+                                        <th>Menge</th>
+                                        <th>Einzelpreis</th>
+                                        <th>Gesamt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><input type="text" class="form-control description" placeholder="Beschreibung"></td>
+                                        <td><input type="number" class="form-control quantity" placeholder="Menge" min="0"></td>
+                                        <td><input type="number" class="form-control unit-price" placeholder="Einzelpreis" min="0" step="0.01"></td>
+                                        <td><input type="number" class="form-control total" placeholder="Gesamt" disabled></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-secondary" id="addPositionButton">Position hinzufügen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    
+        <button class="btn btn-primary mt-4" onclick="genpdf()">PDF Generieren</button>
     </div>
-  
-  </div>
-
- 
- 
-    
-      
-
-        <div class="mb-3">
-            <br>
-            <input type="number" class="form-control" id="amount" placeholder="Gesamtbetrag" disabled>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Speichern</button>
-
-</div>
-    
+    <!--FOOTBAR-->
+    <br>
+    <br>
+    <div id="footer-container"></div>
+    <!--FOOTBAR-->
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>    <script src="menubar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>    
+    <script src="menubar.js"></script>
     <script src="footbar.js"></script>
-
 
     <script>
         function updateTotals() {
             const rows = document.querySelectorAll('#positionsTable tbody tr');
             let grandTotal = 0;
-
+    
             rows.forEach(row => {
                 const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
                 const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
                 const totalField = row.querySelector('.total');
-
+    
                 const total = quantity * unitPrice;
                 totalField.value = total.toFixed(2);
                 grandTotal += total;
             });
-
-            document.getElementById('amount').value = grandTotal.toFixed(2);
+    
+            //document.getElementById('amount').value = grandTotal.toFixed(2);
         }
-
+    
         document.getElementById('addPositionButton').addEventListener('click', function() {
             const table = document.getElementById('positionsTable').getElementsByTagName('tbody')[0];
             const rowCount = table.rows.length + 1;
             const row = table.insertRow();
-
+    
+            // Inhalt der neuen Zeile
             row.innerHTML = `
                 <td>${rowCount}</td>
-                <td><input type="text" class="form-control" placeholder="Beschreibung"></td>
+                <td><input type="text" class="form-control description" placeholder="Beschreibung"></td>
                 <td><input type="number" class="form-control quantity" placeholder="Menge" min="0"></td>
                 <td><input type="number" class="form-control unit-price" placeholder="Einzelpreis" min="0" step="0.01"></td>
                 <td><input type="number" class="form-control total" placeholder="Gesamt" disabled></td>
+                <td><button type="button" class="btn btn-danger delete-btn">X</button></td>
             `;
-
+    
+            // Füge Eventlistener für die Eingabefelder und den Löschen-Button hinzu
             row.querySelector('.quantity').addEventListener('input', updateTotals);
             row.querySelector('.unit-price').addEventListener('input', updateTotals);
+            row.querySelector('.delete-btn').addEventListener('click', function() {
+                row.remove();
+                updateTotals();
+            });
         });
-
+    
+        // Eventlistener für vorhandene Eingabefelder und Löschen-Buttons
         document.querySelectorAll('.quantity, .unit-price').forEach(input => {
             input.addEventListener('input', updateTotals);
         });
+    
+        // Generiere PDF
+        function genpdf() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+    
+            // Kopfzeile
+            doc.setFontSize(22);
+            doc.setTextColor(128);
+            doc.text("xxx", 20, 20);
+    
+            doc.setTextColor(0, 0, 0); 
+            doc.setFontSize(9);
+            doc.text("{{Firma_Adresse}}, {{Firma_PLZ}} {{Firma_Ort}}", 20, 25);
+            doc.text("Telefon: {{Firma_Telefon}} | Email: {{Firma_Email}}", 20, 50);
+    
+            // Rechnungstitel
+            doc.setFontSize(15);
+            doc.text("{{Rechnung_Titel}}", 20, 40);
+    
+            // Kundendetails
+            doc.setFontSize(10);
+            doc.text("Auftraggeber:", 20, 45);
+            doc.text("{{Kunde_Name}}", 20, 50);
+            doc.text("{{Kunde_Adresse}}, {{Kunde_PLZ}} {{Kunde_Ort}}", 20, 55);
+    
+            // Rechnungsdetails
+            doc.text("Rechnungsnr.: {{Rechnung_Nummer}}", 140, 45);
+            doc.text("Datum: {{Rechnung_Datum}}", 140, 50);
+            doc.text("Fälligkeitsdatum: {{Rechnung_Faelligkeitsdatum}}", 140, 55);
+    
+            // Tabellenkopf
+            const startX = 20;
+            const startY = 70;
+            doc.text("Nr.", startX, startY);
+            doc.text("Beschreibung", startX + 15, startY);
+            doc.text("Menge", startX + 100, startY);
+            doc.text("Einheit", startX + 120, startY);
+            doc.text("VK-Preis", startX + 140, startY);
+            doc.text("Betrag", startX + 160, startY);
+    
+            // Tabelle
+            const rows = document.querySelectorAll('#positionsTable tbody tr');
+            let currentY = startY + 10;
+            rows.forEach((row, index) => {
+                const description = row.querySelector('.description').value || '';
+                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+                const total = quantity * unitPrice;
+                
+                doc.text((index + 1).toString(), startX, currentY);
+                doc.text(description, startX + 15, currentY);
+                doc.text(quantity.toString(), startX + 100, currentY);
+                doc.text(unitPrice.toString(), startX + 120, currentY);
+                doc.text(total.toFixed(2) + " CHF", startX + 140, currentY);
+                doc.text(total.toFixed(2) + " CHF", startX + 160, currentY);
+                currentY += 10;
+            });
+    
+            // Gesamtsumme
+            const total = Array.from(rows).reduce((sum, row) => {
+                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.unit-price').value) || 0;
+                return sum + (quantity * unitPrice);
+            }, 0);
+            const mwst = total * 0.081;
+            const totalMwst = total + mwst;
+    
+            currentY += 10;
+            doc.text("Rechnungsrabatt: 0.00 CHF", startX + 120, currentY);
+            doc.text("Summe: " + total.toFixed(2) + " CHF", startX + 120, currentY + 10);
+            doc.text("8.1% MWST: " + mwst.toFixed(2) + " CHF", startX + 120, currentY + 20);
+            doc.text("Total inkl. MWST: " + totalMwst.toFixed(2) + " CHF", startX + 120, currentY + 30);
+    
+            // Trennlinie
+            currentY += 40;
+            doc.line(20, currentY, 190, currentY);
+    
+            // Fußzeile
+            doc.text("{{Firma_Fußzeile}}", 20, currentY + 10);
+    
+            // PDF anzeigen
+            const pdfData = doc.output("bloburl");
+            const iframe = document.getElementById("pdfViewer");
+            iframe.src = pdfData;
+    
+            // Modal anzeigen
+            const modal = document.getElementById("pdfModal");
+            modal.style.display = "flex";
+        }
+    
+        function closeModal() {
+            const modal = document.getElementById("pdfModal");
+            modal.style.display = "none";
+        }
     </script>
-
+    
 </body>
 </html>
